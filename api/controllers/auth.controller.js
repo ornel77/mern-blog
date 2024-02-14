@@ -1,8 +1,9 @@
 import User from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
+import { errorHandler } from '../utils/error.js';
 
 // its async cause we need to get the result from mongo and it takes time and after we respond to the user
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   if (
@@ -13,7 +14,7 @@ export const signup = async (req, res) => {
     email === '' ||
     password === ''
   ) {
-    return res.status(400).json({ message: 'All fields are required' });
+    next(errorHandler(400, "All Fields Are Required"))
   }
 
   // si ok hash pwd
@@ -27,6 +28,6 @@ export const signup = async (req, res) => {
     res.status(201).json('Sign up successful');
   } catch (error) {
     console.log('Error in signup controller', error.message);
-    res.status(500).json({ message: error.message });
+    next(error)
   }
 };
