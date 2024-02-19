@@ -10,8 +10,8 @@ const Header = () => {
   const dispatch = useDispatch();
 
   // Get the current user
-  const { currentUser } = useSelector((state) => state.user)
-  const { theme} = useSelector(state => state.theme)
+  const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
   return (
     <Navbar className='border-b-2'>
       <Link
@@ -41,14 +41,18 @@ const Header = () => {
           pill
           onClick={() => dispatch(toggleTheme())}
         >
-          {theme === "light" ? <FaMoon /> : <FaSun />}
+          {theme === 'light' ? <FaMoon /> : <FaSun />}
         </Button>
         {currentUser ? (
           <Dropdown
-            className=''
             arrowIcon='false'
             inline
-            label={<Avatar alt='user' img={currentUser.profilePicture} />}
+            label={
+              <Avatar
+                alt='user'
+                img={currentUser.profilePicture}
+              />
+            }
           >
             <Dropdown.Header>
               <span className='block text-sm'> @{currentUser.username} </span>

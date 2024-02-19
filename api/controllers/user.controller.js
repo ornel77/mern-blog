@@ -35,31 +35,30 @@ export const updateUser = async (req, res, next) => {
         errorHandler(400, 'Username can only contain letters and numbers')
       );
     }
-    try {
-      const userDbByUsername = await User.findOne({ username });
-      const userDbByEmail = await User.findOne({ email });
-      if (userDbByUsername || userDbByEmail) {
-        return next(errorHandler(400, 'This email or usernmae is taken'));
-      }
+  }
+  try {
+    // const userDbByUsername = await User.find({ $and : [username, {_id: {$ne: req.user.id}}] });
+    // const userDbByEmail = await User.findOne({ email });
+    // if (userDbByUsername) {
+    //   return next(errorHandler(400, 'This email or usernmae is taken'));
+    // }
 
-      
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        {
-          $set: {
-            username,
-            email,
-            profilePicture,
-            password: req.body.password,
-          },
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          username,
+          email,
+          profilePicture,
+          password: req.body.password,
         },
-        { new: true }
-      );
+      },
+      { new: true }
+    );
 
-      const { password, ...rest } = updatedUser._doc;
-      res.status(200).json(rest);
-    } catch (error) {
-      next(error);
-    }
+    const { password, ...rest } = updatedUser._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
   }
 };
