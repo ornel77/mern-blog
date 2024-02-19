@@ -11,6 +11,7 @@ const OAuth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const auth = getAuth(app);
+
   const handleGoogleClick = async () => {
     const provider = new GoogleAuthProvider();
     // we set that so that it always ask what gmail account we want to use
@@ -26,7 +27,8 @@ const OAuth = () => {
           googlePhotoUrl: resultsFromGoogle.user.photoURL,
         }),
       });
-      const data = res.json();
+      const data = await res.json();
+      console.log(data);
       if (res.ok) {
         dispatch(signInSuccess(data))
         navigate('/')
@@ -35,6 +37,7 @@ const OAuth = () => {
       console.log(error);
     }
   };
+  
   return (
     <Button
       type='button'
