@@ -2,6 +2,17 @@ import User from '../models/user.model.js';
 import { errorHandler } from '../utils/error.js';
 import bcryptjs from 'bcryptjs';
 
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({}).select('-password')
+    // const users = await User.find({}).select('_id username email profilePicture')
+    // const users = await User.find({},'_id username email profilePicture')
+    res.status(200).json(users)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const updateUser = async (req, res, next) => {
   const { username, email, profilePicture } = req.body;
   const { userId } = req.params;
@@ -37,10 +48,10 @@ export const updateUser = async (req, res, next) => {
     }
   }
   try {
-    // const userDbByUsername = await User.find({ $and : [username, {_id: {$ne: req.user.id}}] });
+    // const userDbByUsername = await User.find({ $and : [username, {"_id:" {$ne: req.user.id}}] });
     // const userDbByEmail = await User.findOne({ email });
     // if (userDbByUsername) {
-    //   return next(errorHandler(400, 'This email or usernmae is taken'));
+    //   return next(errorHandler(400, 'This email or usernmame is taken'));
     // }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -62,3 +73,19 @@ export const updateUser = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export const deleteUser = async (req, res, next) => {
+  const {userId} = req.params
+  if(req.user.id !== userId) {
+    return(next(errorHandler(403, "You are not allowed to delete this user")))
+  }
+
+  try {
+    await User.findByIdAndDelete(userId)
+    res.status(200).json("User has been deleted")
+  } catch (error) {
+    next(error)
+  }
+}
+
