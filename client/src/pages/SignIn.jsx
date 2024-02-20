@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Label, TextInput, Button, Alert, Spinner } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { signInStart, signInFailure, signInSuccess } from '../redux/user/userSlice'
 import {useDispatch, useSelector} from 'react-redux'
 import OAuth from '../components/OAuth';
@@ -17,6 +17,10 @@ const SignIn = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
+
+  // useEffect(() => {
+  //   dispatch(signInSuccess())
+  // }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,9 +51,6 @@ const SignIn = () => {
     } catch (error) {
       dispatch(signInFailure(error.message))
     }
-    //  finally {
-    //   setLoading(false);
-    // }
   };
 
   return (
@@ -107,7 +108,7 @@ const SignIn = () => {
           </form>
           <div className='flex gap-2 text-sm mt-5'>
             <span>Don&apos;t have an account ?</span>
-            <Link to='/sign-in' className='text-blue-500'>
+            <Link to='/sign-up' className='text-blue-500'>
               Sign Up
             </Link>
           </div>
