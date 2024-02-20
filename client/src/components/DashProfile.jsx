@@ -9,7 +9,7 @@ import {
   deleteUserFailure,
   deleteUserStart,
   deleteUserSuccess,
-  signoutSuccess
+  signoutSuccess,
 } from '../redux/user/userSlice';
 import {
   getDownloadURL,
@@ -22,6 +22,7 @@ import { app } from '../firebase';
 // import for progress
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { Link } from 'react-router-dom';
 
 const DashProfile = () => {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -136,38 +137,38 @@ const DashProfile = () => {
   const handleDeleteUser = async () => {
     setShowModal(false);
     try {
-      dispatch(deleteUserStart())
+      dispatch(deleteUserStart());
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
         method: 'DELETE',
-      })
+      });
 
-      const data = await res.json()
-      if(!res.ok) {
-        dispatch(deleteUserFailure(data.message))
+      const data = await res.json();
+      if (!res.ok) {
+        dispatch(deleteUserFailure(data.message));
       } else {
-        dispatch(deleteUserSuccess(data))
+        dispatch(deleteUserSuccess(data));
       }
     } catch (error) {
-      dispatch(deleteUserFailure(error.message))
+      dispatch(deleteUserFailure(error.message));
     }
   };
 
   const handleSignout = async () => {
     try {
       const res = await fetch('/api/auth/signout', {
-        method: "POST"
-      })
+        method: 'POST',
+      });
 
-      const data = await res.json()
-      if(!res.ok) {
+      const data = await res.json();
+      if (!res.ok) {
         console.log(data.messaage);
-      }else {
-        dispatch(signoutSuccess())
+      } else {
+        dispatch(signoutSuccess());
       }
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
       <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
@@ -235,22 +236,30 @@ const DashProfile = () => {
           placeholder='password'
           onChange={handleChange}
         />
-        <Button type='submit' gradientDuoTone='purpleToBlue' outline>
-          {loading ? (
+        <Button type='submit' gradientDuoTone='purpleToBlue' outline disabled={loading || imageFileUploading}>
+          {loading || imageFileUploading ? (
             <>
               <Spinner size='sm' />
-              <span>Loading...</span>
             </>
           ) : (
             'Update'
           )}
         </Button>
+        {currentUser.isAdmin && (
+          <Link to="/create-post">
+            <Button type='button' gradientDuoTone='purpleToPink' className='w-full'>
+              Create a post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className='text-red-500 flex justify-between mt-5 '>
         <span onClick={() => setShowModal(true)} className='cursor-pointer'>
           Delete Account
         </span>
-        <span className='cursor-pointer' onClick={handleSignout}>Sign Out</span>
+        <span className='cursor-pointer' onClick={handleSignout}>
+          Sign Out
+        </span>
       </div>
       {updateUserSuccess && (
         <Alert color='success' className='mt-5'>
