@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Label, TextInput, Button, Alert, Spinner } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import {useState } from 'react';
 import { signInStart, signInFailure, signInSuccess } from '../redux/user/userSlice'
 import {useDispatch, useSelector} from 'react-redux'
 import OAuth from '../components/OAuth';
