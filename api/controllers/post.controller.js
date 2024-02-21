@@ -53,7 +53,7 @@ export const getposts = async (req, res, next) => {
       .skip(startIndex)
       .limit(limit);
 
-    const totalPosts = await Post.countDocuments({userId: req.query.userId});
+    const totalPosts = await Post.countDocuments({ userId: req.query.userId });
 
     const now = new Date();
 
@@ -64,30 +64,62 @@ export const getposts = async (req, res, next) => {
     );
 
     const lastMonthPosts = await Post.countDocuments({
-        createdAt: {$gte: oneMonthAgo},
-    })
+      createdAt: { $gte: oneMonthAgo },
+    });
 
     res.status(200).json({
-        posts,
-        totalPosts,
-        lastMonthPosts
-    })
+      posts,
+      totalPosts,
+      lastMonthPosts,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-
 export const deletePost = async (req, res, next) => {
-  const {postId, userId} = req.params
-  if(!req.user.isAdmin || req.user.id !== userId) {
-    return next(errorHandler(403, "Unauthorized to delete this post"))
+  const { postId, userId } = req.params;
+  if (!req.user.isAdmin || req.user.id !== userId) {
+    return next(errorHandler(403, 'Unauthorized to delete this post'));
   }
 
   try {
-    await Post.findByIdAndDelete(postId)
-    res.status(200).json("The post has been deleted")
+    await Post.findByIdAndDelete(postId);
+    res.status(200).json('The post has been deleted');
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
+
+export const updatePost = async (req, res, next) => {
+  const { postId, userId } = req.params;
+  const { title, content, category, image } = req.body;
+  if (!req.user.isAdmin || req.user.id !== userId) {
+    return next(errorHandler(403, 'Unauthorized to update this post'));
+  }
+
+  try {
+    const slug = title
+    .split(' ')
+    .join('-')
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9-]/g, '');
+
+    const updatePost = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $set: {
+          title,
+          content,
+          category,
+          image,
+          slug
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatePost);
+  } catch (error) {
+    next(error);
+  }
+};
