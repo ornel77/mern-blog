@@ -7,7 +7,6 @@ import { FaCheck, FaTimes } from 'react-icons/fa';
 const DashUsers = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [users, setUsers] = useState([]);
-  const [totalUsers, setTotalUsers] = useState(0);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
@@ -19,7 +18,6 @@ const DashUsers = () => {
         const data = await res.json();
         if (res.ok) {
           setUsers(data.users);
-          setTotalUsers(data.totalUsers);
           if (data.users.length <= 9) {
             setShowMore(false);
           }
@@ -72,7 +70,6 @@ const DashUsers = () => {
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {currentUser.isAdmin && users.length > 0 ? (
         <>
-          <p>{totalUsers}</p>
           <Table hoverable className='shadow-md'>
             <Table.Head>
               <Table.HeadCell>Date Created</Table.HeadCell>
