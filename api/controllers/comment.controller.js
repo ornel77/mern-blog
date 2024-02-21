@@ -24,10 +24,36 @@ export const getComments = async (req, res, next) => {
   const { postId } = req.params;
   try {
     // récupérer les commentaires selon l'id du post
-    const comments = await Comment.find({ postId }).sort({createdAt: -1})
-    res.status(200).json(comments)
-
+    const comments = await Comment.find({ postId }).sort({ createdAt: -1 });
+    res.status(200).json(comments);
   } catch (error) {
-    next(error)
+    next(error);
+  }
+};
+
+export const likeComment = async (req, res, next) => {
+  const { commentId } = req.params;
+
+  try {
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return next(errorHandler(404, 'Comment not found'));
+    }
+
+    // on veut savoir si le user à déjà commenter ce post
+    const userIndex = comment.likes.indexOf(req.user.id);
+    // si on le trouve pas on le rajoute à l'array des likes sinon on le supprime
+    if (userIndex === -1) {
+      comment.numberOfLikes += 1;
+      comment.likes.push(req.user.id);
+    } else {
+      comment.numberOfLikes -= 1;
+      comment.likes.splice(userIndex, 1);
+    }
+
+    await comment.save();
+    res.status(200).json(comment)
+  } catch (error) {
+    next(error);
   }
 };
