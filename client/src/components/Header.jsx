@@ -63,7 +63,7 @@ const Header = () => {
         </Button>
         {currentUser ? (
           <Dropdown
-            arrowIcon='false'
+            arrowIcon={false}
             inline
             label={
               <Avatar
