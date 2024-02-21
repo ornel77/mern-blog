@@ -42,6 +42,19 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
+export const getUser = async (req, res, next) => {
+  const {userId} = req.params
+  try {
+    const user = await User.findById(userId).select('-password')
+    if (!user) {
+      return next(errorHandler(404, 'User not found'));
+    }
+    res.status(200).json(user)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const updateUser = async (req, res, next) => {
   const { username, email, profilePicture } = req.body;
   const { userId } = req.params;
