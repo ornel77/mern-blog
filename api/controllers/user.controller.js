@@ -3,15 +3,44 @@ import { errorHandler } from '../utils/error.js';
 import bcryptjs from 'bcryptjs';
 
 export const getAllUsers = async (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, 'Not allower to see all users'));
+  }
   try {
-    const users = await User.find({}).select('-password')
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.sort === 'asc' ? 1 : -1;
+
+    const users = await User.find({})
+      .select('-password')
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
     // const users = await User.find({}).select('_id username email profilePicture')
     // const users = await User.find({},'_id username email profilePicture')
-    res.status(200).json(users)
+
+    const totalUsers = await User.countDocuments();
+
+    const now = new Date();
+
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+
+    const lastMonthUsers = await User.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+    res.status(200).json({
+      users,
+      totalUsers,
+      lastMonthUsers,
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const updateUser = async (req, res, next) => {
   const { username, email, profilePicture } = req.body;
@@ -74,20 +103,16 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
-
 export const deleteUser = async (req, res, next) => {
-  const {userId} = req.params
-  if(req.user.id !== userId) {
-    return(next(errorHandler(403, "You are not allowed to delete this user")))
+  const { userId } = req.params;
+  if (req.user.id !== userId) {
+    return next(errorHandler(403, 'You are not allowed to delete this user'));
   }
 
   try {
-    await User.findByIdAndDelete(userId)
-    res.status(200).json("User has been deleted")
+    await User.findByIdAndDelete(userId);
+    res.status(200).json('User has been deleted');
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
-
-
-
+};

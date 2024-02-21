@@ -4,7 +4,7 @@ import { verifyToken } from '../utils/verifyUser.js'
 
 const router = express.Router()
 
-router.get('/', verifyToken, getAllUsers)
+router.get('/getusers', verifyToken, getAllUsers)
 router.put('/update/:userId', verifyToken, updateUser)
 router.delete('/delete/:userId', verifyToken, deleteUser)
 
