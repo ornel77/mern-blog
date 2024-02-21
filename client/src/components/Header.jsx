@@ -69,6 +69,7 @@ const Header = () => {
               <Avatar
                 alt='user'
                 img={currentUser.profilePicture}
+                rounded
               />
             }
           >
