@@ -53,7 +53,7 @@ export const getposts = async (req, res, next) => {
       .skip(startIndex)
       .limit(limit);
 
-    const totalPosts = await Post.countDocuments({ userId: req.query.userId });
+    const totalPosts = await Post.countDocuments();
 
     const now = new Date();
 
@@ -99,7 +99,7 @@ export const updatePost = async (req, res, next) => {
   }
 
   try {
-    const slug = title
+    const slug = req.body.title
     .split(' ')
     .join('-')
     .toLowerCase()
