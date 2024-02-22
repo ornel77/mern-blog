@@ -53,6 +53,7 @@ const CommentSection = ({ postId }) => {
       } else {
         setCommentError(null);
         setComment('');
+        // to update in real time the array of comments
         setComments([data, ...comments]);
       }
     } catch (error) {
@@ -88,6 +89,16 @@ const CommentSection = ({ postId }) => {
       console.log(error.message);
     }
   };
+
+  const handleEdit = async (comment, editedContent) => {
+    // update the comment if its edited c is the comment non edited
+    // on parcoure le tableau de comments et si l'id du comment edite match avec un du tableau alors on l'update
+    setComments(
+      comments.map((c) => c._id === comment._id ? {...c, content: editedContent} : c )
+    )
+  }
+
+  
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
       {currentUser ? (
@@ -154,7 +165,7 @@ const CommentSection = ({ postId }) => {
             </div>
           </div>
           {comments.map((comment) => (
-            <Comment key={comment._id} comment={comment} onLike={handleLike} />
+            <Comment key={comment._id} comment={comment} onLike={handleLike} onEdit={handleEdit}/>
           ))}
         </>
       )}
