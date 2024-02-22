@@ -52,7 +52,7 @@ export const likeComment = async (req, res, next) => {
     }
 
     await comment.save();
-    res.status(200).json(comment)
+    res.status(200).json(comment);
   } catch (error) {
     next(error);
   }
@@ -67,16 +67,38 @@ export const editComment = async (req, res, next) => {
     }
 
     // Check is the person is the owner of the comment and is an admin
-    if(comment.userId !== req.user.id && !req.user.isAdmin) {
-      return next(errorHandler(403, "Unauthorized to edit this comment"))
+    if (comment.userId !== req.user.id && !req.user.isAdmin) {
+      return next(errorHandler(403, 'Unauthorized to edit this comment'));
     }
     // if ok we get back our comment et updated it with the new content
-    const editedComment = await Comment.findByIdAndUpdate(commentId, {
-      content: req.body.content
-    }, {new: true})
+    const editedComment = await Comment.findByIdAndUpdate(
+      commentId,
+      {
+        content: req.body.content,
+      },
+      { new: true }
+    );
 
-    res.status(200).json(editedComment)
-    
+    res.status(200).json(editedComment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteComment = async (req, res, next) => {
+  const { commentId } = req.params;
+  const comment = await Comment.findById(commentId);
+  if (!comment) {
+    return next(errorHandler(404, 'Comment not found'));
+  }
+  if(comment.userId !== req.user.id && !req.user.isAdmin) {
+    return next(errorHandler(403, 'Not allowed to delelete this comment'));
+  }
+  await Comment.findByIdAndDelete(commentId)
+  res.status(200).json('Comment deleted')
+
+
+  try {
   } catch (error) {
     next(error);
   }
