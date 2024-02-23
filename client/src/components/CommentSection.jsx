@@ -19,7 +19,7 @@ const CommentSection = ({ postId }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await fetch(`/api/comment/getComments/${postId}`);
+        const res = await fetch(`/api/comment/getPostComments/${postId}`);
         const data = await res.json();
         if (res.ok) {
           setComments(data);
